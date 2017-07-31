@@ -227,11 +227,6 @@ class ReadMatrixAndCompute {
       insertValueIntoMatrix();
       j++;
     }
-    // Reset instance variables involved in
-    prevWasSpace = true;
-    parsingInt = false;
-    charIsNegative = false;
-    currIntValue = 0;
   }
 
   /**
@@ -294,6 +289,11 @@ class ReadMatrixAndCompute {
     } else {
       ml.add(currIntValue, i, j);
     }
+    // Reset instance variables involved in
+    prevWasSpace = true;
+    parsingInt = false;
+    charIsNegative = false;
+    currIntValue = 0;
   }
 
   /**
