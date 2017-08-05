@@ -41,7 +41,6 @@ class MatrixList {
   private class Node {
 
     Fraction datum;
-    Node prev;
     Node next;
     Node down;
 
@@ -53,7 +52,6 @@ class MatrixList {
      */
     Node(int x) {
       datum = new Fraction(x);
-      prev = null;
       next = null;
       down = null;
     }
@@ -104,7 +102,6 @@ class MatrixList {
     } else {
       Node newItem = new Node(x);
       curr.next = newItem;
-      newItem.prev = curr;
       curr = newItem;
       j++;
       if (i != 0) {
@@ -129,6 +126,14 @@ class MatrixList {
     }
   }
 
+  /**
+   * Driver method for calculating the determinant of the matrix currently
+   * in memory. Will call methods that swap the first row if need be,
+   * convert the matrix to row echelon via matrix reduction, and
+   * calculates the determinant by forming the product of the elements
+   * in the diagonal.
+   * @return: The int value of the determinant of the matrix
+   */
   int calculateDeterminant() {
     int rowSwappedCorrection = 1;
     /* If the first item in the first row is 0, must swap the rows */
@@ -141,8 +146,9 @@ class MatrixList {
         return 0;
       } else {
         swapFirstRowWithRowAt(rIndex);
+        // Adjust negative sign of final answer, since row was swapped
         rowSwappedCorrection = -1;
-        System.out.println("Switched rows!");
+        System.out.println("Swapped rows: 1 and " + (rIndex + 1));
       }
     }
     /* Convert the MatrixList to row echelon form */
@@ -207,31 +213,39 @@ class MatrixList {
   }
 
   /**
-   *
-   * @param rowToSwap: The index related to the
+   * Method which swaps the first row with the desired row.
+   * This method is called when the first row contains a
+   * "0" at the first position and needs to be swapped with
+   * a row that does has a non-zero value in its first column.
+   * @param rowToSwap: The index of the row we would like to
+   *                 swap with the first one.
    */
   private void swapFirstRowWithRowAt(int rowToSwap) {
-    Node zerothTemp = rows[0];
-    Node temp = rows[rowToSwap];
+    Node zerothTemp = rows[0]; // select first row
+    Node temp = rows[rowToSwap]; // select row x
     if (rowToSwap == 1) {
       while (temp != null) {
+        // swap row down-pointers
         zerothTemp.down = temp.down;
         temp.down = zerothTemp;
-        temp = temp.next;
-        zerothTemp = zerothTemp.next;
+        temp = temp.next; // advance to right
+        zerothTemp = zerothTemp.next; // advance to right
       }
     } else {
+      // must also reassign down pointers from row above
       Node aboveTemp = rows[rowToSwap - 1];
       while (temp != null) {
+        // swap down pointers
         aboveTemp.down = zerothTemp;
         Node belowZeroth = zerothTemp.down;
         zerothTemp.down = temp.down;
         temp.down = belowZeroth;
         temp = temp.next;
-        zerothTemp = zerothTemp.next;
-        aboveTemp = aboveTemp.next;
+        zerothTemp = zerothTemp.next; // advance to right
+        aboveTemp = aboveTemp.next; // advance to right
       }
     }
+    // update pointers in row array
     Node anchor = rows[rowToSwap];
     rows[rowToSwap] = rows[0];
     rows[0] = anchor;

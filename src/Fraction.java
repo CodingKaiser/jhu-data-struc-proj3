@@ -38,7 +38,7 @@ public class Fraction {
    * and the input. Does not return the reduced product.
    */
   Fraction mult(Fraction x) {
-    return new Fraction(this.num * x.num, this.den * x.den);
+    return reduce(new Fraction(this.num * x.num, this.den * x.den));
   }
 
   /**
@@ -50,9 +50,9 @@ public class Fraction {
    */
   Fraction div(Fraction x) {
     if (x.num < 0) {
-      return new Fraction(this.num * x.den * -1, this.den * x.num * -1);
+      return reduce(new Fraction(this.num * x.den * -1, this.den * x.num * -1));
     } else {
-      return new Fraction(this.num * x.den, this.den * x.num);
+      return reduce(new Fraction(this.num * x.den, this.den * x.num));
     }
   }
 
@@ -64,8 +64,53 @@ public class Fraction {
    * Fraction by the input.
    */
   Fraction sub(Fraction x) {
-    return new Fraction(this.num * x.den - x.num * this.den,
-            this.den * x.den);
+    return reduce(new Fraction(this.num * x.den - x.num * this.den,
+            this.den * x.den));
+  }
+
+  /**
+   * Performs the reduction of the input Fraction. Will either
+   * return the original Fraction or a reduced form.
+   * @param x: The Fraction we want to reduce
+   * @return: The reduced Fraction or the original
+   * Fraction if it could not be reduced.
+   */
+  static Fraction reduce(Fraction x) {
+    if (x.num == 0) {
+      return new Fraction(x.num);
+    }
+    // GCD of any number and 1 is 1
+    if (x.num == 1 || x.den == 1) {
+      return x;
+    }
+    int numerator = x.num;
+    int denominator = x.den;
+    // Positive integers only to simplify calcGCD logic
+    if (numerator < 0) {
+      numerator = 0 - numerator;
+    }
+    if (denominator < 0) {
+      denominator = 0 - denominator;
+    }
+    int gcd = calcGcd(numerator, denominator);
+    return new Fraction(x.num/gcd, x.den/gcd);
+  }
+
+  /**
+   * Recursive method that calculates the GCD of the two
+   * input integers.
+   * @param a: The numerator, but could be any integer
+   * @param b: The denominator, but could be any integer
+   * @return The GCD
+   */
+  private static int calcGcd(int a, int b) {
+    if (a == b) {
+      return a;
+    } else if (b > a) {
+      return calcGcd(a, b - a);
+    } else {
+      return calcGcd(a - b, a);
+    }
   }
 
   /**
